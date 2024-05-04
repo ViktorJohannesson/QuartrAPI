@@ -10,14 +10,7 @@ This project fetches the latest 10-K reports for a set list of companies from th
 
 ## Setup
 
-### Install Python Dependencies
-
-First, install the required Python libraries with pip:
-```
-pip install -r requirements.txt
-```
-
-### Install wkhtmltopdf
+### Install wkhtmltopdf (to run the GoodVersion)
 wkhtmltopdf needs to be installed separately as it is used by pdfkit to render PDFs. Please download it from wkhtmltopdf downloads and install it according to your operating system.
 ```
 https://wkhtmltopdf.org/downloads.html
@@ -29,8 +22,7 @@ Ensure wkhtmltopdf is installed in the default path or update the path in the sc
 path_to_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
 ```
 
-### Usage
-
+### Install Python Dependencies
 To run the code using a virtual machine, run the following commands;
 ```
 python -m venv venv
@@ -43,15 +35,21 @@ For macOS/Linux:
 ```
 source venv/bin/activate
 ```
+Install the required Python libraries with pip:
+```
+pip install -r requirements.txt
+```
+
+### Usage
 
 Run the script from the command line:
 ```
-source venv/bin/activate
+python .\GoodVersion.py
 ```
+or
 ```
-source venv/bin/activate
+python .\WorseVersion.py
 ```
-```
-python main.py
-```
-The script will fetch the latest 10-K reports for predefined companies and convert each to a PDF file saved in the current directory.
+The scripts will fetch the latest 10-K reports for predefined companies and convert each to a PDF file saved in the current directory.
+
+The difference is that GoodVersion need wkhtmltopdf to work, while WorseVersion does not. However, WorseVersion uses a local library that does not need external libraries but that is worse at interpret the content of a HTML document. So if you run that version it will fail at interpret, for example, the Table of Contents. 
