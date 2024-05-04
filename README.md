@@ -30,7 +30,27 @@ path_to_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
 ```
 
 ### Usage
+
+To run the code using a virtual machine, run the following commands;
+```
+python -m venv venv
+```
+For Windows:
+```
+.\venv\Scripts\activate
+```
+For macOS/Linux:
+```
+source venv/bin/activate
+```
+
 Run the script from the command line:
+```
+source venv/bin/activate
+```
+```
+source venv/bin/activate
+```
 ```
 python main.py
 ```
