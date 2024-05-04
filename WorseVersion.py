@@ -1,5 +1,5 @@
 import requests
-from weasyprint import HTML
+from xhtml2pdf import pisa
 
 companies = {
     "Apple": "0000320193",
@@ -34,19 +34,36 @@ def get_latest_10k_report(data):
                 }
     return None
 
+def preprocess_html(html_content):
+    # Example: Simplifying table structures (basic example)
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(html_content, 'html.parser')
+    for table in soup.find_all('table'):
+        for row in table.find_all('tr'):
+            if len(row.find_all('td', recursive=False)) != len(table.find_all('col')):  # Checking column consistency
+                row.decompose()  # This removes the row; consider other adjustments as needed
+    return str(soup)
+
 def download_report(doc_url, filename):
+    headers = {"User-Agent": "Sample Company Name AdminContact@<sample company domain>.com"}
     try:
-        headers = {"User-Agent": "Sample Company Name AdminContact@<sample company domain>.com"}
         response = requests.get(doc_url, headers=headers)
         response.raise_for_status()
-        html_content = response.content.decode('utf-8')
-        html = HTML(string=html_content)
-        html.write_pdf(f"{filename}_not_as_good.pdf")
-        print(f"Converted PDF saved as: {filename}.pdf")
+        html_content = response.text
+
+        # Preprocess HTML to simplify tables
+        processed_html = preprocess_html(html_content)
+
+        with open(f"{filename}_not_as_good.pdf", "wb") as pdf_file:
+            pdf = pisa.CreatePDF(processed_html, pdf_file)
+            if pdf.err:
+                raise Exception(f"PDF creation error: {pdf.err}")
+        print(f"PDF successfully saved as: {filename}_not_as_good.pdf")
+
     except requests.exceptions.RequestException as e:
-        print(f"Failed to download report: {e}")
+        print(f"Failed to download HTML: {e}")
     except Exception as e:
-        print(f"Error converting to PDF: {e}")
+        print(f"Error during PDF creation: {e}")
 
 def main():
     for company_name, cik in companies.items():
