@@ -13,25 +13,24 @@ This project fetches the latest 10-K reports for a set list of companies from th
 ### Install Python Dependencies
 
 First, install the required Python libraries with pip:
-
 ```
 pip install -r requirements.txt
 ```
 
-## Install wkhtmltopdf
+### Install wkhtmltopdf
 wkhtmltopdf needs to be installed separately as it is used by pdfkit to render PDFs. Please download it from wkhtmltopdf downloads and install it according to your operating system.
 ```
 https://wkhtmltopdf.org/downloads.html
 ```
 
-Configuration
+### Configuration
 Ensure wkhtmltopdf is installed in the default path or update the path in the script:
 ```
 path_to_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
 ```
-Usage
-Run the script from the command line:
 
+### Usage
+Run the script from the command line:
 ```
 python main.py
 ```
