@@ -1,6 +1,8 @@
 import requests
 import pdfkit
 
+path_to_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
 companies = {
     "Apple": "0000320193",
     "Meta": "0001326801",
@@ -16,26 +18,22 @@ def fetch_data(api_url):
             "User-Agent": "Sample Company Name AdminContact@<sample company domain>.com"
         }
         response = requests.get(api_url, headers=headers)
-        response.raise_for_status()
+        response.raise_for_status()  # Ensures we raise an exception for HTTP errors
         return response.json()
     except requests.exceptions.RequestException as e:
         print(f"Error fetching data from {api_url}: {e}")
         return None
 
 def get_latest_10k_report(data):
-    if 'filings' in data and 'recent' in data['filings']:
-        forms = data['filings']['recent'].get('form', [])
-        for index, form in enumerate(forms):
-            if form == '10-K':
-                return {
-                    'accessionNumber': data['filings']['recent'].get('accessionNumber', [])[index],
-                    'filingDate': data['filings']['recent'].get('filingDate', [])[index],
-                    'primaryDocument': data['filings']['recent'].get('primaryDocument', [])[index]
+    forms = data['filings']['recent']['form']
+    for index, form in enumerate(forms):
+        if form == '10-K':
+            return {
+                'accessionNumber': data['filings']['recent']['accessionNumber'][index],
+                'filingDate': data['filings']['recent']['filingDate'][index],
+                'primaryDocument': data['filings']['recent']['primaryDocument'][index]
                 }
     return None
-
-path_to_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'  # Update this path as needed
-config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
 
 def download_report(doc_url, filename, config):
     try:
@@ -47,10 +45,6 @@ def download_report(doc_url, filename, config):
         pdf_path = f"{filename}.pdf"
         options = {
             'no-images': '',  # Optional: Disables loading of images
-            'disable-javascript': '',  # Optional: Disables JavaScript
-            'no-stop-slow-scripts': '',  # Optional: Let scripts run forever
-            'load-error-handling': 'ignore',  # Optional: Ignore loading errors
-            'load-media-error-handling': 'ignore'  # Optional: Ignore media loading errors
         }
         pdfkit.from_string(response.text, pdf_path, configuration=config, options=options)
         print(f"Converted PDF saved as: {pdf_path}")
@@ -61,7 +55,7 @@ def download_report(doc_url, filename, config):
         print(f"Error converting to PDF: {e}")
 
 def main():
-    config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)  # Make sure wkhtmltopdf is configured
+    config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
     for company_name, cik in companies.items():
         print(f"Fetching 10-K for {company_name}")
         api_url = f"https://data.sec.gov/submissions/CIK{cik}.json"

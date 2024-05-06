@@ -24,19 +24,19 @@ def fetch_data(api_url):
 
 def get_latest_10k_report(data):
     if 'filings' in data and 'recent' in data['filings']:
-        forms = data['filings']['recent'].get('form', [])
+        forms = data['filings']['recent']['form']
         for index, form in enumerate(forms):
             if form == '10-K':
                 return {
-                    'accessionNumber': data['filings']['recent'].get('accessionNumber', [])[index],
-                    'filingDate': data['filings']['recent'].get('filingDate', [])[index],
-                    'primaryDocument': data['filings']['recent'].get('primaryDocument', [])[index]
+                'accessionNumber': data['filings']['recent']['accessionNumber'][index],
+                'filingDate': data['filings']['recent']['filingDate'][index],
+                'primaryDocument': data['filings']['recent']['primaryDocument'][index]
                 }
     return None
 
 def preprocess_html(html_content):
-    # Example: Simplifying table structures (basic example)
     from bs4 import BeautifulSoup
+
     soup = BeautifulSoup(html_content, 'html.parser')
     for table in soup.find_all('table'):
         for row in table.find_all('tr'):
